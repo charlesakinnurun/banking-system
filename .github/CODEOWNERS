@@ -1,0 +1,16 @@
+# Default owners for the money path and security-sensitive code.
+# Anyone may review general changes; these areas require a code owner.
+
+# Money path: ledger, idempotency, transactions
+/src/domain/ledger.ts            @charlesakinnurun
+/src/application/ledger-service.ts @charlesakinnurun
+/src/application/idempotency.ts  @charlesakinnurun
+/src/infrastructure/db/unit-of-work.ts @charlesakinnurun
+
+# Auth & security
+/src/application/auth-service.ts @charlesakinnurun
+/src/infrastructure/crypto/      @charlesakinnurun
+/src/http/plugins/               @charlesakinnurun
+
+# Schema & integrity
+/migrations/                     @charlesakinnurun
