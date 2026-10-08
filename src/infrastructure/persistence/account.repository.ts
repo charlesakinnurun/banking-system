@@ -57,6 +57,7 @@ export class PgAccountRepository implements AccountRepository {
   }
 
   /**
+   * 
    * Lock accounts for update. We sort the ids ourselves AND order the query by
    * id so every caller acquires locks in the same global order — this is what
    * makes two opposite transfers unable to deadlock (see ARCHITECTURE.md §5).
