@@ -1,0 +1,46 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: banking-postgres
+    environment:
+      POSTGRES_USER: banking
+      POSTGRES_PASSWORD: banking
+      POSTGRES_DB: banking
+      # Deterministic collation keeps ORDER BY / index behaviour reproducible.
+      POSTGRES_INITDB_ARGS: '--encoding=UTF8 --locale=C'
+    ports:
+      - '5432:5432'
+    volumes:
+      - banking-pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U banking -d banking']
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    command:
+      - postgres
+      - -c
+      - max_connections=200
+      - -c
+      - shared_buffers=256MB
+
+  api:
+    build:
+      context: .
+      target: runtime
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      HOST: 0.0.0.0
+      PORT: 3000
+      DATABASE_URL: postgres://banking:banking@postgres:5432/banking
+      JWT_SECRET: replace-me-with-at-least-32-random-characters
+      METRICS_ENABLED: 'true'
+    ports:
+      - '3000:3000'
+    command: ['sh', '-c', 'node dist/cli/migrate.js && node dist/main.js']
+
+volumes:
+  banking-pgdata:
